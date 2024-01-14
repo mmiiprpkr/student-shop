@@ -1,0 +1,54 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/">Back To School</a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link active fs-5" href="/">Home</a>
+        </li>
+        <li class="nav-item">
+          <% if (!user &&!usertype) { %>
+          <a class="nav-link fs-5" href="/productcustomer">Products</a>
+          <% } else if(user &&!usertype) { %>
+          <a class="nav-link fs-5" href="/productlogin/<%= cmID%>">Products</a>
+          <% } else {%>
+          <a class="nav-link fs-5" href="/products">Products</a>
+          <% } %>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link fs-5" href="/contact">Contact</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link fs-5" href="/service">Service</a>
+        </li>
+      </ul>
+      <% if (user && !usertype) { %>
+      <div>
+        <a>ยินดีต้อนรับ, <%= user %></a>
+        <a href="/logout" class="btn btn-danger">ออกจากระบบ</a>
+        <a href="/allproduct" class="btn btn-success">orderlist</a>
+        <%} else if(user && usertype){ %>
+        <a>ยินดีต้อนรับ Admin, <%= user %></a>
+        <a href="/neworder" class="btn btn-warning mx-2">New Order</a>
+        <a href="/oldorder" class="btn btn-success mx-2">Accept Order</a>
+        <a href="/dashboard" class="btn btn-success mx-2">Dashboard</a>
+        <a href="/logout" class="btn btn-danger">ออกจากระบบ</a>
+      </div>
+      <% } else { %>
+      <a href="/login" class="btn btn-primary mx-2">เข้าสู่ระบบ</a>
+      <a href="/customer/register" class="btn btn-warning">ลงทะเบียน</a>
+      <% } %>
+    </div>
+  </div>
+</nav>

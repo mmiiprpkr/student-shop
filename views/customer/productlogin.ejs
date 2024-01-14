@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="../images/logo.png" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Itim&family=Prompt:wght@100;400;600&family=Ubuntu:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/boxicons@latest/css/boxicons.min.css"
+    />
+    <title>ProductsForCustomer</title>
+    <style>
+      body {
+        background-color: #2c3539;
+        color: #ffffff;
+      }
+      .card-container {
+        margin: 100px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        text-align: center;
+        gap: 20px;
+      }
+      .card {
+        border: 1px solid #ccc;
+        border-radius: 30px;
+        padding: 10px;
+        width: calc(25% - 20px); /* 25% width for each card with spacing */
+        margin-bottom: 20px;
+        color: black;
+        align-items: center;
+      }
+      * {
+        font-family: "Itim", cursive;
+      }
+      .text-end {
+        display: flex;
+        justify-content: flex-end;
+      }
+      .icon i {
+        font-size: 30px;
+        color: white;
+      }
+      .cart {
+        position: fixed;
+        right: 10px;
+        top: 300;
+        z-index: 100;
+      }
+      @media (max-width: 768px) {
+        /* Adjust styles for screens up to 768px wide */
+        .card-container {
+          margin: 20px;
+          gap: 10px;
+        }
+        .card {
+          width: calc(50% - 20px);
+        }
+      }
+
+      @media (max-width: 576px) {
+        /* Adjust styles for screens up to 576px wide (e.g., mobile devices) */
+        .card {
+          width: 100%;
+        }
+        .navlist {
+          flex-direction: column;
+          align-items: center;
+        }
+        .navlist a {
+          margin: 10px 0;
+        }
+        .text-end {
+          justify-content: flex-end;
+        }
+        .icon i {
+          font-size: 25px;
+        }
+        .cart-button {
+          margin-top: 5px;
+          font-size: 14px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <%- include("../nav") %>
+    <div class="mx-3 mt-2 text-end">
+      <form id="cart-form" action="/orders" method="get">
+        <button type="submit" class="btn btn-info cart" onclick="viewCart()">
+          <i class="bx bxs-basket fs-5"></i
+          ><span id="cart-count" class="fs-5">0</span>
+        </button>
+        <input type="hidden" name="productIDs" id="productIDs" value="" />
+        <input
+          type="hidden"
+          name="customerID"
+          id="customerID"
+          value="<%= customerID %>"
+        />
+        <input type="hidden" name="quantity" id="quantity" value="1" />
+      </form>
+
+      <script>
+        var shoppingCart = [];
+
+        function addToCart(
+          productId,
+          productName,
+          productPrice,
+          productQuantity
+        ) {
+          console.log(productQuantity);
+          if (productQuantity == 0) {
+            return alert("สินค้าหมดแล้ว ขอโทษด้วยนะครับ");
+          }
+          var isItemInCart = false;
+          for (var i = 0; i < shoppingCart.length; i++) {
+            if (shoppingCart[i].productId === productId) {
+              isItemInCart = true;
+              break;
+            }
+          }
+
+          if (!isItemInCart) {
+            shoppingCart.push({
+              productId: productId,
+              productName: productName,
+              productPrice: productPrice,
+            });
+
+            updateCartCount();
+            updateProductIDsInput(); // Call a new function to update the hidden input field
+          }
+        }
+
+        function updateCartCount() {
+          var cartCount = document.getElementById("cart-count");
+          cartCount.textContent = shoppingCart.length;
+        }
+
+        function viewCart() {
+          // You can implement your logic here to display the shopping cart items to the user.
+          // For example, you could create a modal or redirect the user to a new page.
+          console.log(shoppingCart);
+        }
+
+        function updateProductIDsInput() {
+          // Get the hidden input field
+          var productIDsInput = document.getElementById("productIDs");
+
+          // Get an array of product IDs from the shoppingCart array
+          var productIDsArray = shoppingCart.map((item) => item.productId);
+
+          // Set the value of the hidden input field with a comma-separated list of product IDs
+          productIDsInput.value = productIDsArray.join(",");
+        }
+      </script>
+    </div>
+
+    <!-- <div class="container">
+    <div class="row">
+      <% for(var i=0; i < items.length; i++) { %>
+        <% if (i % 3 === 0) { %>
+          <div class="col-md-4 mx-auto text-center">
+        <% } else if (i % 3 === 1) { %>
+          <div class="col-md-4 mx-auto text-center">
+        <% } else { %>
+          <div class="col-md-4 mx-auto text-center">
+        <% } %>
+          <div class="card">
+            <style>
+              .product-image {
+                width: 300px;
+                height: 300px;
+              }
+            </style>
+            <br>
+            <img class="product-image" src="/images/<%=items[i].picture %>" alt="product image">
+            
+            <div class="card-body">
+              <h5 class="card-title"><%= items[i].name %></h5>
+              <p class="card-text">Price: <%= items[i].price %></p>
+              <button class="add-to-cart-button" onclick="addToCart('<%= items[i].id %>', '<%= items[i].name %>', '<%= items[i].price %>');">Add to Cart</button>
+              <style>
+                .add-to-cart-button {
+                  padding: 10px 20px;
+                  background-color: #17a5ba67;
+                  color: #333; /* Change the text color back to black (#333) */
+                  border: none;
+                  border-radius: 5px;
+                  cursor: pointer;
+                }
+              </style>
+            </div>
+          </div>
+        </div>
+      <% } %>
+    </div>
+  </div> -->
+
+    <h1 class="text-center mt-5">Product List</h1>
+    <div class="card-container mt-5">
+      <% items.forEach(product => { %>
+      <div class="card">
+        <img
+          src="/images/<%=product.picture%>"
+          alt=""
+          style="height: 150px; width: 150px"
+        />
+        <h2><%= product.name %></h2>
+        <p>Price: <%= product.price %></p>
+        <p>Unit: <%= product.unit %></p>
+        <button
+          class="add-to-cart-button btn btn-primary"
+          onclick="addToCart('<%= product.id %>', '<%= product.name %>', '<%= product.price %>',' <%= product.unit %>');"
+        >
+          Add to Cart
+        </button>
+      </div>
+      <% }); %>
+    </div>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>
